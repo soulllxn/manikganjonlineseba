@@ -238,7 +238,6 @@ export default function Home() {
           <BottomActionRow icon="information-circle" label="ডেভেলপার সম্পর্কে" onPress={() => router.push("/about")} testID="about-btn" />
           <BottomActionRow icon="add-circle" label="যুক্ত করতে চাই" onPress={() => router.push("/join-request")} testID="join-btn" />
           <BottomActionRow icon="chatbox-ellipses" label="অভিযোগ বা পরামর্শ" onPress={() => router.push("/complaint")} testID="complaint-btn" />
-          <BottomActionRow icon="lock-closed" label="অ্যাডমিন প্যানেল" onPress={() => router.push("/admin/login")} testID="admin-btn" />
         </View>
       </ScrollView>
 

@@ -13,7 +13,7 @@ export default function ProfileTab() {
     { icon: "information-circle", label: "ডেভেলপার সম্পর্কে", route: "/about", testID: "profile-about" },
     { icon: "add-circle", label: "যুক্ত করতে চাই", route: "/join-request", testID: "profile-join" },
     { icon: "chatbox-ellipses", label: "অভিযোগ বা পরামর্শ", route: "/complaint", testID: "profile-complaint" },
-    { icon: "lock-closed", label: "অ্যাডমিন প্যানেল", route: "/admin/login", testID: "profile-admin" },
+    { icon: "lock-closed", label: "লগইন", route: "/admin/login", testID: "profile-admin" },
   ];
 
   return (
