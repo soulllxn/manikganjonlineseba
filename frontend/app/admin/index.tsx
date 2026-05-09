@@ -137,6 +137,12 @@ const SCHEMAS: Record<string, { title: string; fields: FieldDef[] }> = {
     { key: "url", label: "URL", type: "url" },
     { key: "order", label: "ক্রম", type: "number" },
   ]},
+  notifications: { title: "নোটিফিকেশন (পুশ)", fields: [
+    { key: "title", label: "শিরোনাম", type: "text" },
+    { key: "body", label: "বার্তা", type: "longtext" },
+    { key: "image", label: "ছবির URL (ঐচ্ছিক)", type: "url" },
+    { key: "link", label: "লিংক (ঐচ্ছিক)", type: "url" },
+  ]},
   complaints: { title: "অভিযোগ/পরামর্শ", fields: [
     { key: "name", label: "নাম", type: "text" },
     { key: "phone", label: "ফোন", type: "phone" },
@@ -157,7 +163,7 @@ const COLLECTION_ORDER = [
   "hospitals", "police", "fire_service", "doctors", "blood_banks",
   "ambulances", "rent_a_car", "restaurants", "upazilas",
   "schools", "colleges", "madrasas", "blood_donors", "tourist_places",
-  "e_services", "complaints", "join_requests",
+  "e_services", "notifications", "complaints", "join_requests",
 ];
 
 export default function AdminDashboard() {

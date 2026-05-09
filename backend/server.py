@@ -299,6 +299,12 @@ async def seed_sample_data():
             _doc({"name": "তেওতা জমিদার বাড়ি", "description": "ঐতিহাসিক স্থাপনা।", "location": "শিবালয়", "image": "https://images.unsplash.com/photo-1767154966937-68e31b7825f1?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200", "upazila": "শিবালয়", "is_active": True}),
         ])
 
+    if await db.notifications.count_documents({}) == 0:
+        await db.notifications.insert_many([
+            _doc({"title": "মানিকগঞ্জ অনলাইন সেবায় স্বাগতম!", "body": "আপনার জেলার সকল প্রয়োজনীয় সেবা এখন এক অ্যাপে।", "is_active": True}),
+            _doc({"title": "নতুন রেস্টুরেন্ট মেনু এসেছে", "body": "এখন রেস্টুরেন্টের নামে ট্যাপ করে মেনু দেখতে পারবেন।", "is_active": True}),
+        ])
+
     if await db.e_services.count_documents({}) == 0:
         await db.e_services.insert_many([
             _doc({"name": "NID সেবা", "icon": "card", "url": "https://services.nidw.gov.bd/", "order": 1, "is_active": True}),
@@ -362,7 +368,7 @@ PUBLIC_COLLECTIONS = {
     "notices", "sliders", "services", "ads", "hospitals", "police",
     "fire_service", "doctors", "blood_banks", "ambulances", "rent_a_car",
     "restaurants", "upazilas", "schools", "colleges", "madrasas",
-    "blood_donors", "tourist_places", "e_services",
+    "blood_donors", "tourist_places", "e_services", "notifications",
 }
 
 ALL_COLLECTIONS = PUBLIC_COLLECTIONS | {"district_commissioner", "complaints", "join_requests"}

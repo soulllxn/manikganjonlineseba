@@ -9,6 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { BlurView } from "expo-blur";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../src/api";
 import { colors } from "../../src/theme";
 import { HeroSlider } from "../../src/components/HeroSlider";
@@ -58,20 +59,34 @@ export default function Home() {
   const [dc, setDc] = useState<any | null>(null);
   const [upazilas, setUpazilas] = useState<any[]>([]);
   const [eservices, setEServices] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unread, setUnread] = useState<number>(0);
   const [refreshing, setRefreshing] = useState(false);
+
+  const computeUnread = useCallback(async (list: any[]) => {
+    try {
+      const lastSeen = await AsyncStorage.getItem("manikganj_notif_last_seen");
+      const lastSeenTs = lastSeen ? new Date(lastSeen).getTime() : 0;
+      const cnt = list.filter((n) => new Date(n.created_at).getTime() > lastSeenTs).length;
+      setUnread(cnt);
+    } catch { setUnread(list.length); }
+  }, []);
 
   const load = useCallback(async () => {
     try {
-      const [n, s, sv, ad, d, up, es] = await Promise.all([
+      const [n, s, sv, ad, d, up, es, nf] = await Promise.all([
         api.list("notices"), api.list("sliders"), api.list("services"),
         api.list("ads"), api.dc(), api.list("upazilas"), api.list("e_services"),
+        api.list("notifications"),
       ]);
       setNotices(n); setSliders(s); setServices(sv);
       setAds(ad); setDc(d); setUpazilas(up); setEServices(es);
+      setNotifications(nf);
+      await computeUnread(nf);
     } catch (e: any) {
       console.log("home load error", e?.message);
     }
-  }, []);
+  }, [computeUnread]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -98,9 +113,17 @@ export default function Home() {
           <Ionicons name="menu" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>মানিকগঞ্জ অনলাইন সেবা</Text>
-        <TouchableOpacity testID="header-notif-btn" style={styles.iconBtn}>
+        <TouchableOpacity
+          testID="header-notif-btn"
+          onPress={() => router.push("/notifications")}
+          style={styles.iconBtn}
+        >
           <Ionicons name="notifications-outline" size={22} color={colors.textPrimary} />
-          <View style={styles.notifDot} />
+          {unread > 0 ? (
+            <View style={styles.notifBadge}>
+              <Text style={styles.notifBadgeText}>{unread > 9 ? "9+" : String(unread)}</Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
       </View>
 
@@ -296,6 +319,13 @@ const styles = StyleSheet.create({
   headerTitle: { flex: 1, textAlign: "center", fontSize: 16, fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary },
   iconBtn: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
   notifDot: { position: "absolute", top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: colors.red },
+  notifBadge: {
+    position: "absolute", top: 4, right: 4,
+    minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4,
+    backgroundColor: colors.red, alignItems: "center", justifyContent: "center",
+    borderWidth: 1.5, borderColor: "#fff",
+  },
+  notifBadgeText: { color: "#fff", fontFamily: "HindSiliguri_700Bold", fontSize: 10 },
 
   section: { marginTop: 18, paddingHorizontal: 16 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: GAP },
