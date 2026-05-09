@@ -1,0 +1,155 @@
+{
+  "theme_and_archetype": {
+    "theme": "Light",
+    "archetype": "Archetype 4 (Swiss & High-Contrast) + Civic Premium Twist",
+    "rationale": "For a government/civic service app, the UI must command trust and authority while remaining highly accessible. Stark white backgrounds with structural greys are accented by Bangladesh's national flag colors (Green and Red) to provide clear, actionable hierarchy. Glassmorphism is used to elevate priority content (like the DC profile and Restaurant menus) without cluttering the screen."
+  },
+  "color_palette": {
+    "primary": "#006A4E",
+    "primary_hover": "#00553E",
+    "accent_red": "#F42A41",
+    "accent_red_hover": "#D91F33",
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "surface_glass": "rgba(255, 255, 255, 0.75)",
+    "text_primary": "#0A0A0A",
+    "text_secondary": "#4B5563",
+    "border": "rgba(0, 0, 0, 0.05)"
+  },
+  "typography": {
+    "font_families": {
+      "heading": "Hind Siliguri, Noto Sans Bengali, sans-serif",
+      "body": "Noto Sans Bengali, sans-serif"
+    },
+    "hierarchy": {
+      "h1": "text-2xl font-bold tracking-tight text-text_primary",
+      "h2": "text-xl font-semibold text-text_primary",
+      "h3": "text-lg font-medium text-text_primary",
+      "body": "text-base text-text_secondary leading-relaxed",
+      "label": "text-sm uppercase tracking-wider text-text_secondary",
+      "tiny": "text-xs text-text_secondary"
+    },
+    "guidelines": "Do not translate Bangla text. Keep UI components cleanly spaced. Avoid line-height issues common in Bangla typography by setting explicit loose line heights."
+  },
+  "spacing_and_layout": {
+    "base_unit": "8px",
+    "padding": {
+      "screen": "p-4",
+      "card": "p-4"
+    },
+    "border_radius": {
+      "small": "4px",
+      "medium": "12px",
+      "large": "24px",
+      "pill": "9999px"
+    },
+    "grid": {
+      "services": "3 columns, gap 12px",
+      "upazilas": "3 columns, gap 12px"
+    }
+  },
+  "surfaces_and_effects": {
+    "glassmorphism": {
+      "background": "rgba(255, 255, 255, 0.7)",
+      "backdrop_filter": "blur(16px)",
+      "border": "1px solid rgba(255, 255, 255, 0.4)",
+      "shadow": "0 8px 32px rgba(0, 0, 0, 0.08)",
+      "usage": "Restaurant menu modals, DC profile card, Header when scrolling."
+    },
+    "soft_card": {
+      "background": "#FFFFFF",
+      "shadow": "0 2px 10px rgba(0, 0, 0, 0.04)",
+      "border": "1px solid rgba(0,0,0,0.02)"
+    },
+    "overlays": {
+      "hero_image": "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)"
+    }
+  },
+  "components": {
+    "splash_screen": {
+      "background": "#006A4E",
+      "logo_animation": "Smooth fade in and scale up",
+      "developer_credit": "Bottom aligned, white text, 12px, font-light",
+      "test_id": "splash-screen"
+    },
+    "header_and_drawer": {
+      "layout": "Fixed top, glassmorphism, hamburger on left, title centered, notification on right",
+      "drawer_content": "Developer info (Image, name, email, close button)",
+      "test_id": "main-header"
+    },
+    "notice_slider": {
+      "badge": "Red background (#F42A41), White text ('নোটিশ')",
+      "animation": "Continuous horizontal scroll (marquee style)",
+      "test_id": "notice-slider"
+    },
+    "hero_slider": {
+      "aspect_ratio": "16:9",
+      "indicators": "Dots, active dot is primary green, inactive is white/50",
+      "animation": "Auto-slide with subtle zoom (Ken Burns effect)",
+      "test_id": "hero-slider"
+    },
+    "services_grid": {
+      "columns": 3,
+      "card_style": "Soft card, centered icon, text-sm below icon. No gradients on card background, use green/red icons.",
+      "test_id": "services-grid"
+    },
+    "dc_profile_card": {
+      "style": "Glassmorphism elevated above a soft pattern background",
+      "layout": "Avatar top-center (overlapping border), Name, Designation, Phone number",
+      "button": "Primary Green CTA 'কল করুন', full width or wide pill",
+      "test_id": "dc-profile-card"
+    },
+    "upazila_grid": {
+      "columns": 3,
+      "style": "Clean white cards with subtle grey borders. Tap to view details.",
+      "test_id": "upazila-grid"
+    },
+    "restaurant_menu_modal": {
+      "style": "Slide-up bottom sheet / modal. Backdrop blur heavily.",
+      "image_viewer": "Pinch-to-zoom enabled, vertical scrollable menu image.",
+      "test_id": "restaurant-menu-modal"
+    },
+    "bottom_navigation": {
+      "tabs": ["হোম", "জরুরি", "ব্লাড", "উপজেলা", "প্রোফাইল"],
+      "style": "White background, top border 1px grey. Active tab icon and label in Primary Green, inactive in Slate Grey.",
+      "test_id": "bottom-nav"
+    },
+    "admin_dashboard": {
+      "style": "Web-only. Clean Shadcn/UI style. Sidebar navigation. Data tables for CRUD operations.",
+      "test_id": "admin-dashboard"
+    }
+  },
+  "media_assets": {
+    "hero_tourism_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1767154966937-68e31b7825f1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjV8MHwxfHNlYXJjaHwyfHxiYW5nbGFkZXNoJTIwdmlsbGFnZSUyMHJpdmVyJTIwbGFuZHNjYXBlfGVufDB8fHx8MTc3ODMwODMxM3ww&ixlib=rb-4.1.0&q=85",
+        "description": "Bangladesh river landscape"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1674885674907-22e9e566cc3d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxiYW5nbGFkZXNoJTIwYXJjaGl0ZWN0dXJlJTIwbW9udW1lbnR8ZW58MHx8fHwxNzc4MzA4MzEzfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Bangladesh architecture/monument (Baliati Palace alternative)"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1754501485320-56fed8806e4e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxiYW5nbGFkZXNoJTIwYXJjaGl0ZWN0dXJlJTIwbW9udW1lbnR8ZW58MHx8fHwxNzc4MzA4MzEzfDA&ixlib=rb-4.1.0&q=85",
+        "description": "National Martyrs' Memorial"
+      }
+    ],
+    "restaurant_samples": [
+      {
+        "url": "https://images.unsplash.com/photo-1565556250026-9ba22083e3e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwyfHxiZW5nYWxpJTIwZm9vZCUyMGN1cnJ5JTIwcmVzdGF1cmFudHxlbnwwfHx8fDE3NzgzMDgzMTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Bengali restaurant food table"
+      }
+    ],
+    "dc_and_developer_profiles": [
+      {
+        "url": "https://images.pexels.com/photos/10919461/pexels-photo-10919461.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "DC Profile Placeholder (Professional in suit)"
+      },
+      {
+        "url": "https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Developer Profile Placeholder (Shoriful Alam)"
+      }
+    ]
+  },
+  "instructions_to_main_agent": "Implement mobile screens using React Native Expo and React Native Reanimated. Strict adherence to Bengali Unicode fonts via expo-google-fonts (Hind Siliguri). Use the defined color palette for UI components, avoiding overused gradients. Build the restaurant modal with a performant backdrop blur and use react-native-gesture-handler for pinch-to-zoom on the menu. For the Admin Web Panel, use standard React/Next with Shadcn UI."
+}
