@@ -86,9 +86,11 @@ export default function RestaurantPage() {
               <Text style={styles.sub} numberOfLines={2}>{item.address}</Text>
               <Text style={styles.phone}>📞 {item.phone}</Text>
             </View>
-            <View style={{ gap: 8, alignItems: "center" }}>
-              <MapButton url={item.mapUrl} lat={item.latitude} lng={item.longitude} testID={`restaurant-map-${item.id}`} />
-              <CallButton phone={item.phone} testID={`restaurant-call-${item.id}`} />
+            <View style={{ alignItems: "center", justifyContent: "center", gap: 10 }}>
+              <CallButton phone={item.phone} testID={`restaurant-call-${item.id}`} compact />
+              {item.mapEnabled !== false && (item.mapUrl || (item.latitude != null && item.longitude != null)) ? (
+                <MapButton url={item.mapUrl} lat={item.latitude} lng={item.longitude} testID={`restaurant-map-${item.id}`} />
+              ) : null}
             </View>
           </View>
         )}

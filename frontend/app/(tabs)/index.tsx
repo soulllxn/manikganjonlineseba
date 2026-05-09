@@ -258,7 +258,6 @@ export default function Home() {
 
         {/* Bottom Action Buttons */}
         <View style={[styles.section, { gap: 10 }]}>
-          <BottomActionRow icon="information-circle" label="ডেভেলপার সম্পর্কে" onPress={() => router.push("/about")} testID="about-btn" />
           <BottomActionRow icon="add-circle" label="যুক্ত করতে চাই" onPress={() => router.push("/join-request")} testID="join-btn" />
           <BottomActionRow icon="chatbox-ellipses" label="অভিযোগ বা পরামর্শ" onPress={() => router.push("/complaint")} testID="complaint-btn" />
         </View>

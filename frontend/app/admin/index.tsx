@@ -7,7 +7,7 @@ import { Image } from "expo-image";
 import { api, clearToken, getToken } from "../../src/api";
 import { colors } from "../../src/theme";
 
-type FieldDef = { key: string; label: string; type: "text" | "number" | "url" | "phone" | "longtext"; placeholder?: string };
+type FieldDef = { key: string; label: string; type: "text" | "number" | "url" | "phone" | "longtext" | "boolean"; placeholder?: string };
 
 const SCHEMAS: Record<string, { title: string; fields: FieldDef[] }> = {
   notices: { title: "নোটিশ", fields: [
@@ -84,9 +84,11 @@ const SCHEMAS: Record<string, { title: string; fields: FieldDef[] }> = {
     { key: "phone", label: "ফোন", type: "phone" },
     { key: "image", label: "ইমেজ URL", type: "url" },
     { key: "menuImage", label: "মেনু ইমেজ URL", type: "url" },
+    { key: "menuImageEnabled", label: "মেনু ইমেজ চালু", type: "boolean" },
     { key: "mapUrl", label: "Google Map URL", type: "url" },
     { key: "latitude", label: "Latitude", type: "number" },
     { key: "longitude", label: "Longitude", type: "number" },
+    { key: "mapEnabled", label: "ম্যাপ চালু (অফ করলে ম্যাপ আইকন লুকাবে)", type: "boolean" },
     { key: "upazila", label: "উপজেলা", type: "text" },
   ]},
   upazilas: { title: "উপজেলা", fields: [
@@ -200,7 +202,10 @@ export default function AdminDashboard() {
 
   const openCreate = () => {
     const blank: any = { is_active: true };
-    schema.fields.forEach((f) => { blank[f.key] = f.type === "number" ? 0 : ""; });
+    schema.fields.forEach((f) => {
+      if (f.type === "boolean") blank[f.key] = true;
+      else blank[f.key] = f.type === "number" ? 0 : "";
+    });
     setForm(blank);
     setEditing({ __new: true });
   };
@@ -214,6 +219,10 @@ export default function AdminDashboard() {
     try {
       const payload: any = { is_active: form.is_active !== false };
       schema.fields.forEach((f) => {
+        if (f.type === "boolean") {
+          payload[f.key] = form[f.key] !== false;
+          return;
+        }
         if (form[f.key] === undefined || form[f.key] === "") return;
         payload[f.key] = f.type === "number" ? Number(form[f.key]) : form[f.key];
       });
@@ -350,19 +359,34 @@ export default function AdminDashboard() {
             <ScrollView contentContainerStyle={{ padding: 16 }}>
               {schema.fields.map((f) => (
                 <View key={f.key} style={{ marginBottom: 12 }}>
-                  <Text style={styles.fieldLabel}>{f.label}</Text>
-                  <TextInput
-                    testID={`field-${f.key}`}
-                    value={String(form[f.key] ?? "")}
-                    onChangeText={(v) => setForm({ ...form, [f.key]: v })}
-                    style={[styles.fieldInput, f.type === "longtext" && { minHeight: 80, textAlignVertical: "top" }]}
-                    keyboardType={f.type === "number" ? "numeric" : f.type === "phone" ? "phone-pad" : "default"}
-                    placeholder={f.placeholder || ""}
-                    multiline={f.type === "longtext"}
-                  />
-                  {f.type === "url" && form[f.key] ? (
-                    <Image source={form[f.key]} style={styles.preview} contentFit="cover" />
-                  ) : null}
+                  {f.type === "boolean" ? (
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 6 }}>
+                      <Switch
+                        testID={`field-${f.key}`}
+                        value={form[f.key] !== false}
+                        onValueChange={(v) => setForm({ ...form, [f.key]: v })}
+                        trackColor={{ false: "#CBD5E1", true: colors.primary }}
+                        thumbColor="#fff"
+                      />
+                      <Text style={[styles.fieldLabel, { marginBottom: 0, flex: 1 }]}>{f.label}</Text>
+                    </View>
+                  ) : (
+                    <>
+                      <Text style={styles.fieldLabel}>{f.label}</Text>
+                      <TextInput
+                        testID={`field-${f.key}`}
+                        value={String(form[f.key] ?? "")}
+                        onChangeText={(v) => setForm({ ...form, [f.key]: v })}
+                        style={[styles.fieldInput, f.type === "longtext" && { minHeight: 80, textAlignVertical: "top" }]}
+                        keyboardType={f.type === "number" ? "numeric" : f.type === "phone" ? "phone-pad" : "default"}
+                        placeholder={f.placeholder || ""}
+                        multiline={f.type === "longtext"}
+                      />
+                      {f.type === "url" && form[f.key] ? (
+                        <Image source={form[f.key]} style={styles.preview} contentFit="cover" />
+                      ) : null}
+                    </>
+                  )}
                 </View>
               ))}
               <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, gap: 8 }}>
