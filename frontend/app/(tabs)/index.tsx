@@ -326,10 +326,10 @@ const styles = StyleSheet.create({
 
   dcWrap: { borderRadius: 24, overflow: "hidden", padding: 0 },
   dcBgGradient: { ...StyleSheet.absoluteFillObject as any, borderRadius: 24 },
-  dcGlass: { padding: 18, flexDirection: "row", alignItems: "center", borderRadius: 24, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.55)", gap: 14 },
+  dcGlass: { padding: 18, flexDirection: "row", alignItems: "center", borderRadius: 24, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.55)", gap: 22 },
   dcAvatarRing: { padding: 4, borderRadius: 60, backgroundColor: "rgba(255,255,255,0.85)", borderWidth: 1, borderColor: "rgba(255,255,255,0.6)" },
   dcAvatar: { width: 92, height: 92, borderRadius: 46 },
-  dcInfo: { flex: 1, paddingLeft: 8 },
+  dcInfo: { flex: 1, paddingLeft: 16 },
   dcName: { fontSize: 19, fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary, letterSpacing: 0.2 },
   dcDesignation: { fontSize: 12, fontFamily: "HindSiliguri_500Medium", color: colors.textSecondary, marginTop: 2 },
   dcPhone: { fontSize: 13, fontFamily: "HindSiliguri_600SemiBold", color: colors.primary, marginTop: 6 },
