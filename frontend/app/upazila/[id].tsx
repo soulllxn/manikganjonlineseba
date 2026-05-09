@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { api } from "../../src/api";
+import { CallButton } from "../../src/components/Common";
 import { colors } from "../../src/theme";
 
 export default function UpazilaDetail() {
@@ -47,6 +48,54 @@ export default function UpazilaDetail() {
           <Text style={styles.banTitle}>{upazila?.name}</Text>
         </View>
 
+        {upazila?.uno_name || upazila?.uno_phone ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>উপজেলা নির্বাহী অফিসার</Text>
+            <View style={styles.unoCard} testID="uno-card">
+              <Image
+                source={upazila.uno_image || "https://images.pexels.com/photos/10919461/pexels-photo-10919461.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"}
+                style={styles.unoAvatar}
+                contentFit="cover"
+              />
+              <View style={{ flex: 1, marginLeft: 14 }}>
+                {upazila.uno_name ? <Text style={styles.unoName}>{upazila.uno_name}</Text> : null}
+                <Text style={styles.unoDesignation}>উপজেলা নির্বাহী অফিসার</Text>
+                {upazila.uno_phone ? <Text style={styles.unoPhone}>📞 {upazila.uno_phone}</Text> : null}
+                {upazila.uno_phone ? (
+                  <View style={{ marginTop: 10, alignSelf: "flex-start" }}>
+                    <CallButton phone={upazila.uno_phone} testID="uno-call-btn" />
+                  </View>
+                ) : null}
+              </View>
+            </View>
+          </View>
+        ) : null}
+
+        {upazila?.area || upazila?.stats ? (
+          <View style={[styles.section, { paddingTop: 0 }]}>
+            <View style={styles.statsCard} testID="upazila-stats-card">
+              {upazila.area ? (
+                <View style={styles.statRow}>
+                  <View style={styles.statIcon}><Ionicons name="resize" size={18} color={colors.primary} /></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.statLabel}>আয়তন</Text>
+                    <Text style={styles.statValue}>{upazila.area}</Text>
+                  </View>
+                </View>
+              ) : null}
+              {upazila.stats ? (
+                <View style={[styles.statRow, { borderTopWidth: upazila.area ? StyleSheet.hairlineWidth : 0 }]}>
+                  <View style={styles.statIcon}><Ionicons name="bar-chart" size={18} color={colors.primary} /></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.statLabel}>পরিসংখ্যান</Text>
+                    <Text style={styles.statValue}>{upazila.stats}</Text>
+                  </View>
+                </View>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>সেবাসমূহ</Text>
           <View style={styles.grid}>
@@ -86,4 +135,14 @@ const styles = StyleSheet.create({
   tile: { flexBasis: "31%", flexGrow: 1, backgroundColor: "#fff", borderRadius: 14, padding: 14, alignItems: "center", borderWidth: 1, borderColor: "rgba(0,0,0,0.04)" },
   tileIcon: { width: 48, height: 48, borderRadius: 12, backgroundColor: "#ECFDF5", alignItems: "center", justifyContent: "center", marginBottom: 8 },
   tileText: { fontFamily: "HindSiliguri_600SemiBold", fontSize: 12, color: colors.textPrimary, textAlign: "center" },
+  unoCard: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 18, padding: 14, borderWidth: 1, borderColor: "rgba(0,0,0,0.04)" },
+  unoAvatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: "#E5E7EB" },
+  unoName: { fontFamily: "HindSiliguri_700Bold", fontSize: 15, color: colors.textPrimary },
+  unoDesignation: { fontFamily: "HindSiliguri_500Medium", fontSize: 12, color: colors.textSecondary, marginTop: 2 },
+  unoPhone: { fontFamily: "HindSiliguri_600SemiBold", fontSize: 13, color: colors.primary, marginTop: 6 },
+  statsCard: { backgroundColor: "#fff", borderRadius: 18, paddingHorizontal: 14, borderWidth: 1, borderColor: "rgba(0,0,0,0.04)" },
+  statRow: { flexDirection: "row", alignItems: "center", paddingVertical: 14, gap: 12, borderTopColor: "#F1F5F9" },
+  statIcon: { width: 38, height: 38, borderRadius: 10, backgroundColor: "#ECFDF5", alignItems: "center", justifyContent: "center" },
+  statLabel: { fontFamily: "HindSiliguri_500Medium", fontSize: 11, color: colors.textMuted },
+  statValue: { fontFamily: "HindSiliguri_700Bold", fontSize: 14, color: colors.textPrimary, marginTop: 2 },
 });

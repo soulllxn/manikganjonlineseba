@@ -92,6 +92,11 @@ const SCHEMAS: Record<string, { title: string; fields: FieldDef[] }> = {
   upazilas: { title: "উপজেলা", fields: [
     { key: "name", label: "নাম", type: "text" },
     { key: "banner", label: "ব্যানার URL", type: "url" },
+    { key: "uno_name", label: "UNO নাম", type: "text" },
+    { key: "uno_phone", label: "UNO ফোন", type: "phone" },
+    { key: "uno_image", label: "UNO ছবি URL", type: "url" },
+    { key: "area", label: "আয়তন (যেমন: ২১৬.৬৩ বর্গ কিমি)", type: "text" },
+    { key: "stats", label: "পরিসংখ্যান", type: "longtext" },
     { key: "order", label: "ক্রম", type: "number" },
   ]},
   schools: { title: "স্কুল", fields: [

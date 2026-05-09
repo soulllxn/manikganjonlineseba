@@ -80,6 +80,8 @@ async def seed_admin():
 # -------- Sample data seeding --------
 async def seed_sample_data():
     """Seed initial demo content if collections are empty."""
+    UPZ_ORDER = ["মানিকগঞ্জ সদর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া", "সিংগাইর"]
+
     # Notices
     if await db.notices.count_documents({}) == 0:
         await db.notices.insert_many([
@@ -123,11 +125,24 @@ async def seed_sample_data():
         }))
 
     if await db.upazilas.count_documents({}) == 0:
-        upazila_names = ["মানিকগঞ্জ সদর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া", "সিংগাইর"]
+        upazila_seed = [
+            {"name": "মানিকগঞ্জ সদর", "uno_name": "জনাব আবু রায়হান", "area": "২১৬.৬৩ বর্গ কিমি", "stats": "জনসংখ্যা: ৩,২৬,৭০০ | ইউনিয়ন: ১০ | পৌরসভা: ১"},
+            {"name": "শিবালয়", "uno_name": "জনাব মোঃ রফিকুল ইসলাম", "area": "১৯৬.১৫ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৬৫,৫০০ | ইউনিয়ন: ৭"},
+            {"name": "দৌলতপুর", "uno_name": "জনাব মোঃ আব্দুল্লাহ আল মামুন", "area": "১৪৫.৬৭ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৪০,৫০০ | ইউনিয়ন: ৮"},
+            {"name": "ঘিওর", "uno_name": "জনাব মোছাঃ সালেহা আক্তার", "area": "১৪২.০৫ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৫৩,৭০০ | ইউনিয়ন: ৭"},
+            {"name": "হরিরামপুর", "uno_name": "জনাব মোঃ কামরুজ্জামান", "area": "২৪৫.০৩ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৭৬,৯০০ | ইউনিয়ন: ১৩"},
+            {"name": "সাটুরিয়া", "uno_name": "জনাব মোঃ ইয়াসিন", "area": "১৩৭.৪১ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৪৬,৬০০ | ইউনিয়ন: ৯"},
+            {"name": "সিংগাইর", "uno_name": "জনাব মোঃ আনিসুর রহমান", "area": "২১৭.৩৬ বর্গ কিমি", "stats": "জনসংখ্যা: ২,৬০,০০০ | ইউনিয়ন: ১১"},
+        ]
         await db.upazilas.insert_many([
             _doc({
-                "name": n, "order": i + 1, "is_active": True,
+                "name": u["name"], "order": i + 1, "is_active": True,
                 "banner": "https://images.unsplash.com/photo-1767154966937-68e31b7825f1?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+                "uno_name": u["uno_name"],
+                "uno_phone": "+8801700" + f"{i:06d}",
+                "uno_image": "https://images.pexels.com/photos/10919461/pexels-photo-10919461.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300",
+                "area": u["area"],
+                "stats": u["stats"],
                 "buttons": [
                     {"label": "স্কুল", "type": "schools", "is_active": True},
                     {"label": "কলেজ", "type": "colleges", "is_active": True},
@@ -136,8 +151,39 @@ async def seed_sample_data():
                     {"label": "দর্শনীয় স্থান", "type": "tourist_places", "is_active": True},
                     {"label": "শীঘ্রই আসছে", "type": "coming_soon", "is_active": True},
                 ],
-            }) for i, n in enumerate(upazila_names)
+            }) for i, u in enumerate(upazila_seed)
         ])
+
+    # Migration: backfill UNO fields and area/stats for existing upazilas (idempotent)
+    UNO_DEFAULTS = {
+        "মানিকগঞ্জ সদর": {"uno_name": "জনাব আবু রায়হান", "area": "২১৬.৬৩ বর্গ কিমি", "stats": "জনসংখ্যা: ৩,২৬,৭০০ | ইউনিয়ন: ১০ | পৌরসভা: ১"},
+        "শিবালয়": {"uno_name": "জনাব মোঃ রফিকুল ইসলাম", "area": "১৯৬.১৫ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৬৫,৫০০ | ইউনিয়ন: ৭"},
+        "দৌলতপুর": {"uno_name": "জনাব মোঃ আব্দুল্লাহ আল মামুন", "area": "১৪৫.৬৭ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৪০,৫০০ | ইউনিয়ন: ৮"},
+        "ঘিওর": {"uno_name": "জনাব মোছাঃ সালেহা আক্তার", "area": "১৪২.০৫ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৫৩,৭০০ | ইউনিয়ন: ৭"},
+        "হরিরামপুর": {"uno_name": "জনাব মোঃ কামরুজ্জামান", "area": "২৪৫.০৩ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৭৬,৯০০ | ইউনিয়ন: ১৩"},
+        "সাটুরিয়া": {"uno_name": "জনাব মোঃ ইয়াসিন", "area": "১৩৭.৪১ বর্গ কিমি", "stats": "জনসংখ্যা: ১,৪৬,৬০০ | ইউনিয়ন: ৯"},
+        "সিংগাইর": {"uno_name": "জনাব মোঃ আনিসুর রহমান", "area": "২১৭.৩৬ বর্গ কিমি", "stats": "জনসংখ্যা: ২,৬০,০০০ | ইউনিয়ন: ১১"},
+    }
+    for i, n in enumerate(UPZ_ORDER):
+        d = UNO_DEFAULTS.get(n)
+        if not d:
+            continue
+        existing = await db.upazilas.find_one({"name": n})
+        if not existing:
+            continue
+        update_fields = {}
+        if not existing.get("uno_name"):
+            update_fields["uno_name"] = d["uno_name"]
+        if not existing.get("uno_phone"):
+            update_fields["uno_phone"] = "+8801700" + f"{i:06d}"
+        if not existing.get("uno_image"):
+            update_fields["uno_image"] = "https://images.pexels.com/photos/10919461/pexels-photo-10919461.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
+        if not existing.get("area"):
+            update_fields["area"] = d["area"]
+        if not existing.get("stats"):
+            update_fields["stats"] = d["stats"]
+        if update_fields:
+            await db.upazilas.update_one({"id": existing["id"]}, {"$set": update_fields})
 
     if await db.hospitals.count_documents({}) == 0:
         await db.hospitals.insert_many([
@@ -146,17 +192,17 @@ async def seed_sample_data():
             _doc({"name": "ঘিওর উপজেলা স্বাস্থ্য কমপ্লেক্স", "address": "ঘিওর, মানিকগঞ্জ", "phone": "+8801912345678", "is_active": True}),
         ])
 
-    UPZ_ORDER = ["মানিকগঞ্জ সদর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া", "সিংগাইর"]
+    UPZ_ORDER_LOCAL = UPZ_ORDER  # alias to keep migration block stable
     if await db.police.count_documents({}) == 0:
         await db.police.insert_many([
             _doc({"name": f"{n} থানা", "oc_name": "ভারপ্রাপ্ত কর্মকর্তা", "phone": "+8801711000000", "upazila": n, "order": i + 1, "is_active": True})
-            for i, n in enumerate(UPZ_ORDER)
+            for i, n in enumerate(UPZ_ORDER_LOCAL)
         ])
 
     if await db.fire_service.count_documents({}) == 0:
         await db.fire_service.insert_many([
             _doc({"name": f"{n} ফায়ার সার্ভিস", "phone": "+880199", "address": n, "upazila": n, "order": i + 1, "is_active": True})
-            for i, n in enumerate(UPZ_ORDER)
+            for i, n in enumerate(UPZ_ORDER_LOCAL)
         ])
 
     # Migration: ensure police/fire_service have entries for ALL 7 upazilas with proper order
