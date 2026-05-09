@@ -5,24 +5,12 @@ import { colors } from "../theme";
 
 export function CallButton({ phone, label = "কল করুন", testID, compact = false }: { phone: string; label?: string; testID?: string; compact?: boolean }) {
   const scale = useRef(new Animated.Value(1)).current;
-  const pulse = useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, { toValue: 1, duration: 1100, easing: Easing.out(Easing.ease), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: 0, duration: 0, useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, []);
 
   const onPressIn = () => {
-    Animated.spring(scale, { toValue: 0.92, useNativeDriver: true, friction: 5, tension: 120 }).start();
+    Animated.spring(scale, { toValue: 0.94, useNativeDriver: true, friction: 6, tension: 120 }).start();
   };
   const onPressOut = () => {
-    Animated.spring(scale, { toValue: 1, useNativeDriver: true, friction: 4, tension: 100 }).start();
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, friction: 5, tension: 100 }).start();
   };
 
   const onPress = async () => {
@@ -36,34 +24,20 @@ export function CallButton({ phone, label = "কল করুন", testID, compa
     } catch { Alert.alert("ফোন কল ব্যর্থ"); }
   };
 
-  const ringScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.5] });
-  const ringOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.5, 0] });
-
   return (
-    <View testID={testID} style={{ alignItems: "center", justifyContent: "center" }}>
-      <Animated.View
-        pointerEvents="none"
-        style={{
-          position: "absolute", width: "100%", height: "100%",
-          borderRadius: 999, backgroundColor: colors.primary,
-          opacity: ringOpacity, transform: [{ scale: ringScale }],
-        }}
-      />
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
-          <View style={{
-            flexDirection: "row", alignItems: "center", justifyContent: "center",
-            backgroundColor: colors.primary,
-            paddingVertical: compact ? 8 : 10, paddingHorizontal: compact ? 12 : 16,
-            borderRadius: 999, gap: 6,
-            shadowColor: colors.primary, shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 4,
-          }}>
-            <Ionicons name="call" size={compact ? 14 : 16} color="#fff" />
-            <Text style={{ color: "#fff", fontFamily: "HindSiliguri_600SemiBold", fontSize: compact ? 12 : 13 }}>{label}</Text>
-          </View>
-        </Pressable>
-      </Animated.View>
-    </View>
+    <Animated.View testID={testID} style={{ transform: [{ scale }] }}>
+      <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+        <View style={{
+          flexDirection: "row", alignItems: "center", justifyContent: "center",
+          backgroundColor: colors.primary,
+          paddingVertical: compact ? 8 : 10, paddingHorizontal: compact ? 12 : 16,
+          borderRadius: 999, gap: 6,
+        }}>
+          <Ionicons name="call" size={compact ? 14 : 16} color="#fff" />
+          <Text style={{ color: "#fff", fontFamily: "HindSiliguri_600SemiBold", fontSize: compact ? 12 : 13 }}>{label}</Text>
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
