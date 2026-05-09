@@ -262,13 +262,6 @@ export default function Home() {
             >
               <Text style={styles.drawerBtnText}>বন্ধ করুন</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              testID="drawer-exit-btn"
-              onPress={() => setDrawerOpen(false)}
-              style={[styles.drawerBtn, { backgroundColor: "#F3F4F6" }]}
-            >
-              <Text style={[styles.drawerBtnText, { color: colors.textPrimary }]}>প্রস্থান</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
