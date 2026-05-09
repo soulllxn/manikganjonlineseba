@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, Dimensions, FlatList, Animated } from "react-native";
+import { View, Text, StyleSheet, Dimensions, FlatList } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../theme";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = Math.min(width - 64, 500);
+const SNAP = CARD_WIDTH + 12;
 
 export function HeroSlider({ items }: { items: { id: string; title?: string; image: string }[] }) {
   const ref = useRef<FlatList<any>>(null);
@@ -16,7 +17,9 @@ export function HeroSlider({ items }: { items: { id: string; title?: string; ima
     const t = setInterval(() => {
       setIdx((p) => {
         const n = (p + 1) % items.length;
-        ref.current?.scrollToIndex({ index: n, animated: true });
+        try {
+          ref.current?.scrollToOffset({ offset: n * SNAP, animated: true });
+        } catch {}
         return n;
       });
     }, 3500);
@@ -34,11 +37,13 @@ export function HeroSlider({ items }: { items: { id: string; title?: string; ima
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        snapToInterval={CARD_WIDTH + 12}
+        snapToInterval={SNAP}
         decelerationRate="fast"
         contentContainerStyle={{ paddingHorizontal: 32 }}
+        getItemLayout={(_, i) => ({ length: SNAP, offset: SNAP * i, index: i })}
+        onScrollToIndexFailed={() => {}}
         onMomentumScrollEnd={(e) => {
-          const i = Math.round(e.nativeEvent.contentOffset.x / (CARD_WIDTH + 12));
+          const i = Math.round(e.nativeEvent.contentOffset.x / SNAP);
           setIdx(i);
         }}
         renderItem={({ item }) => (

@@ -61,7 +61,13 @@ export default function NotificationsPage() {
                 <Image source={item.image} style={styles.previewImg} contentFit="cover" />
               ) : null}
               <Text style={styles.time}>
-                {new Date(item.created_at).toLocaleString("bn-BD")}
+                {(() => {
+                  try {
+                    const d = item.created_at ? new Date(item.created_at) : null;
+                    if (!d || isNaN(d.getTime())) return "";
+                    return d.toLocaleString();
+                  } catch { return ""; }
+                })()}
               </Text>
               {item.link ? <Text style={styles.linkText}>🔗 বিস্তারিত দেখুন</Text> : null}
             </View>
