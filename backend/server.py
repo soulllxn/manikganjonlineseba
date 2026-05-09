@@ -329,12 +329,11 @@ async def seed_sample_data():
             "website": "https://manikganj-services.com",
             "phone": "+8801700000000",
             "tech_stack": "React Native\nExpo SDK 54\nFastAPI\nMongoDB\nJWT\nTypeScript",
-            "stat_experience_value": "৩+",
-            "stat_experience_label": "বছরের অভিজ্ঞতা",
-            "stat_projects_value": "২০+",
-            "stat_projects_label": "প্রজেক্ট",
-            "stat_upazilas_value": "৭",
-            "stat_upazilas_label": "উপজেলা সেবা",
+            "show_email": True,
+            "show_phone": True,
+            "show_facebook": True,
+            "show_whatsapp": True,
+            "show_website": True,
             "is_active": True,
         }))
 
