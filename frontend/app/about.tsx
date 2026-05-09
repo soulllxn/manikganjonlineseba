@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { api } from "../src/api";
 import { colors } from "../src/theme";
 
 export default function About() {
   const insets = useSafeAreaInsets();
+  const [info, setInfo] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      try { setInfo(await api.aboutInfo()); } catch {}
+    })();
+  }, []);
+
+  const features: string[] = (info?.features || "").split("\n").filter((s: string) => s.trim());
+  const techStack: string[] = (info?.tech_stack || "").split("\n").filter((s: string) => s.trim());
+
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       <View style={styles.header}>
@@ -20,75 +32,69 @@ export default function About() {
         <View style={styles.heroWrap}>
           <LinearGradient colors={["#006A4E", "#00553E"]} style={styles.heroBg} />
           <Image
-            source="https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
+            source={info?.image || "https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"}
             style={styles.avatar}
           />
-          <Text style={styles.devName}>Shoriful Alam</Text>
-          <Text style={styles.devTitle}>Full-Stack Developer</Text>
-          <Text style={styles.devSubtitle}>মানিকগঞ্জ অনলাইন সেবা</Text>
+          <Text style={styles.devName}>{info?.name || "Shoriful Alam"}</Text>
+          {info?.title ? <Text style={styles.devTitle}>{info.title}</Text> : null}
+          {info?.subtitle ? <Text style={styles.devSubtitle}>{info.subtitle}</Text> : null}
 
           <View style={styles.statsRow}>
-            <Stat number="৩+" label="বছরের অভিজ্ঞতা" />
+            <Stat number={info?.stat_experience_value || "৩+"} label={info?.stat_experience_label || "বছরের অভিজ্ঞতা"} />
             <View style={styles.statDivider} />
-            <Stat number="২০+" label="প্রজেক্ট" />
+            <Stat number={info?.stat_projects_value || "২০+"} label={info?.stat_projects_label || "প্রজেক্ট"} />
             <View style={styles.statDivider} />
-            <Stat number="৭" label="উপজেলা সেবা" />
+            <Stat number={info?.stat_upazilas_value || "৭"} label={info?.stat_upazilas_label || "উপজেলা সেবা"} />
           </View>
         </View>
 
-        {/* About developer */}
-        <SectionTitle icon="person-circle" title="ডেভেলপার পরিচিতি" />
-        <View style={styles.card}>
-          <Text style={styles.about}>
-            আসসালামু আলাইকুম! আমি <Text style={styles.bold}>Shoriful Alam</Text>, একজন Full-Stack Developer এবং মানিকগঞ্জ এর গর্বিত নাগরিক।
-            প্রযুক্তিকে কাজে লাগিয়ে নিজ জেলার মানুষের দৈনন্দিন জীবন আরো সহজ করার ভিশন থেকেই এই অ্যাপ এর জন্ম।
-          </Text>
-          <Text style={[styles.about, { marginTop: 10 }]}>
-            React Native, Node.js, Python ও cloud technology তে কাজ করি। দেশের জন্য কিছু করার ছোট প্রচেষ্টা — যা প্রতিনিয়ত আরো ভালো করার চেষ্টায় আছি আপনাদের সহায়তায়।
-          </Text>
-        </View>
+        {info?.bio ? (
+          <>
+            <SectionTitle icon="person-circle" title="ডেভেলপার পরিচিতি" />
+            <View style={styles.card}><Text style={styles.about}>{info.bio}</Text></View>
+          </>
+        ) : null}
 
-        {/* About app */}
-        <SectionTitle icon="sparkles" title="অ্যাপ সম্পর্কে" />
-        <View style={styles.card}>
-          <Text style={styles.about}>
-            <Text style={styles.bold}>মানিকগঞ্জ অনলাইন সেবা</Text> — মানিকগঞ্জ জেলার সকল নাগরিক সেবা এক ছাতার নিচে আনার একটি উদ্যোগ। হাসপাতাল, থানা, ফায়ার সার্ভিস, রক্তদাতা, রেস্টুরেন্ট, ভ্রমণস্থল, রেন্ট-এ-কার এবং আরো অনেক কিছু — সম্পূর্ণ বাংলায়, এক অ্যাপে।
-          </Text>
-          <View style={styles.featureList}>
-            {[
-              "৭ উপজেলার সম্পূর্ণ তথ্য",
-              "জরুরি কল ফিচার",
-              "রক্তদাতা সার্চ ও ফিল্টার",
-              "ডার্ক/লাইট মোড সাপোর্ট",
-              "অ্যাডমিন কন্ট্রোল্ড সকল কন্টেন্ট",
-              "ফ্রি ও ওপেন সোর্স",
-            ].map((f, i) => (
-              <View key={i} style={styles.featureRow}>
-                <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
-                <Text style={styles.featureText}>{f}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        {info?.app_about || features.length ? (
+          <>
+            <SectionTitle icon="sparkles" title="অ্যাপ সম্পর্কে" />
+            <View style={styles.card}>
+              {info?.app_about ? <Text style={styles.about}>{info.app_about}</Text> : null}
+              {features.length ? (
+                <View style={styles.featureList}>
+                  {features.map((f, i) => (
+                    <View key={i} style={styles.featureRow}>
+                      <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
+                      <Text style={styles.featureText}>{f}</Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+          </>
+        ) : null}
 
-        {/* Contact */}
         <SectionTitle icon="mail" title="যোগাযোগ" />
         <View style={{ gap: 10 }}>
-          <Row icon="mail" label="ইমেইল" value="shoriful@manikganj.com" onPress={() => Linking.openURL("mailto:shoriful@manikganj.com")} />
-          <Row icon="logo-facebook" label="Facebook" value="Page দেখুন" onPress={() => Linking.openURL("https://facebook.com")} />
-          <Row icon="logo-whatsapp" label="WhatsApp" value="+880 1700 000 000" onPress={() => Linking.openURL("https://wa.me/8801700000000")} />
-          <Row icon="globe" label="ওয়েবসাইট" value="manikganj-services" onPress={() => Linking.openURL("https://manikganj-services.com")} />
+          {info?.email ? <Row icon="mail" label="ইমেইল" value={info.email} onPress={() => Linking.openURL(`mailto:${info.email}`)} /> : null}
+          {info?.phone ? <Row icon="call" label="ফোন" value={info.phone} onPress={() => Linking.openURL(`tel:${info.phone}`)} /> : null}
+          {info?.facebook ? <Row icon="logo-facebook" label="Facebook" value="Page দেখুন" onPress={() => Linking.openURL(info.facebook)} /> : null}
+          {info?.whatsapp ? <Row icon="logo-whatsapp" label="WhatsApp" value="চ্যাট করুন" onPress={() => Linking.openURL(info.whatsapp)} /> : null}
+          {info?.website ? <Row icon="globe" label="ওয়েবসাইট" value={info.website.replace(/^https?:\/\//, "")} onPress={() => Linking.openURL(info.website)} /> : null}
         </View>
 
-        {/* Tech stack */}
-        <SectionTitle icon="hammer" title="ব্যবহৃত টেকনোলজি" />
-        <View style={[styles.card, { flexDirection: "row", flexWrap: "wrap", gap: 8 }]}>
-          {["React Native", "Expo SDK 54", "FastAPI", "MongoDB", "JWT", "TypeScript"].map((t) => (
-            <View key={t} style={styles.techChip}>
-              <Text style={styles.techText}>{t}</Text>
+        {techStack.length ? (
+          <>
+            <SectionTitle icon="hammer" title="ব্যবহৃত টেকনোলজি" />
+            <View style={[styles.card, { flexDirection: "row", flexWrap: "wrap", gap: 8 }]}>
+              {techStack.map((t) => (
+                <View key={t} style={styles.techChip}>
+                  <Text style={styles.techText}>{t}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
+          </>
+        ) : null}
 
         <Text style={styles.version}>Version 1.0.0 • Built with ❤️ for মানিকগঞ্জ</Text>
       </ScrollView>
@@ -144,7 +150,6 @@ const styles = StyleSheet.create({
   statLabel: { fontFamily: "HindSiliguri_500Medium", fontSize: 11, color: colors.textSecondary, marginTop: 2, textAlign: "center" },
   card: { backgroundColor: "#fff", borderRadius: 16, padding: 18, borderWidth: 1, borderColor: "rgba(0,0,0,0.04)" },
   about: { fontFamily: "HindSiliguri_400Regular", fontSize: 14, color: colors.textSecondary, lineHeight: 22 },
-  bold: { fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary },
   featureList: { marginTop: 14, gap: 8 },
   featureRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   featureText: { fontFamily: "HindSiliguri_500Medium", fontSize: 13, color: colors.textPrimary },

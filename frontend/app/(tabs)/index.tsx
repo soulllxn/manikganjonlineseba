@@ -110,9 +110,7 @@ export default function Home() {
       {splashing ? <SplashOverlay onDone={() => setSplashing(false)} /> : null}
       {/* Header */}
       <View style={[styles.header, { backgroundColor: themeColors.surface, borderBottomColor: themeColors.borderAlt }]} testID="main-header">
-        <TouchableOpacity testID="header-theme-toggle" onPress={toggleTheme} style={styles.iconBtn}>
-          <Ionicons name={mode === "dark" ? "sunny" : "moon"} size={22} color={mode === "dark" ? "#FCD34D" : "#1F2937"} />
-        </TouchableOpacity>
+        <View style={styles.iconBtn} />
         <Text style={[styles.headerTitle, { color: themeColors.textPrimary }]} numberOfLines={1}>মানিকগঞ্জ অনলাইন সেবা</Text>
         <TouchableOpacity
           testID="header-notif-btn"

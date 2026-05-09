@@ -145,6 +145,33 @@ const SCHEMAS: Record<string, { title: string; fields: FieldDef[] }> = {
     { key: "image", label: "ছবির URL (ঐচ্ছিক)", type: "url" },
     { key: "link", label: "লিংক (ঐচ্ছিক)", type: "url" },
   ]},
+  profile_info: { title: "প্রোফাইল কার্ড (Singleton)", fields: [
+    { key: "name", label: "নাম", type: "text" },
+    { key: "email", label: "ইমেইল", type: "text" },
+    { key: "image", label: "ছবির URL", type: "url" },
+    { key: "role", label: "পরিচিতি / ট্যাগলাইন", type: "text" },
+  ]},
+  about_info: { title: "ডেভেলপার সম্পর্কে (Singleton)", fields: [
+    { key: "name", label: "নাম", type: "text" },
+    { key: "title", label: "টাইটেল (যেমন: Full-Stack Developer)", type: "text" },
+    { key: "subtitle", label: "Subtitle", type: "text" },
+    { key: "image", label: "ছবির URL", type: "url" },
+    { key: "bio", label: "ডেভেলপার পরিচিতি (Bio)", type: "longtext" },
+    { key: "app_about", label: "অ্যাপ সম্পর্কে", type: "longtext" },
+    { key: "features", label: "ফিচার তালিকা (প্রতি লাইনে একটি)", type: "longtext" },
+    { key: "email", label: "যোগাযোগ ইমেইল", type: "text" },
+    { key: "phone", label: "ফোন (ঐচ্ছিক)", type: "phone" },
+    { key: "facebook", label: "Facebook URL", type: "url" },
+    { key: "whatsapp", label: "WhatsApp URL", type: "url" },
+    { key: "website", label: "Website URL", type: "url" },
+    { key: "tech_stack", label: "টেকনোলজি (প্রতি লাইনে একটি)", type: "longtext" },
+    { key: "stat_experience_value", label: "অভিজ্ঞতা সংখ্যা (যেমন: ৩+)", type: "text" },
+    { key: "stat_experience_label", label: "অভিজ্ঞতা লেবেল", type: "text" },
+    { key: "stat_projects_value", label: "প্রজেক্ট সংখ্যা", type: "text" },
+    { key: "stat_projects_label", label: "প্রজেক্ট লেবেল", type: "text" },
+    { key: "stat_upazilas_value", label: "উপজেলা সংখ্যা", type: "text" },
+    { key: "stat_upazilas_label", label: "উপজেলা লেবেল", type: "text" },
+  ]},
   complaints: { title: "অভিযোগ/পরামর্শ", fields: [
     { key: "name", label: "নাম", type: "text" },
     { key: "phone", label: "ফোন", type: "phone" },
@@ -165,8 +192,10 @@ const COLLECTION_ORDER = [
   "hospitals", "police", "fire_service", "doctors", "blood_banks",
   "ambulances", "rent_a_car", "restaurants", "upazilas",
   "schools", "colleges", "madrasas", "blood_donors", "tourist_places",
-  "e_services", "notifications", "complaints", "join_requests",
+  "e_services", "notifications", "profile_info", "about_info", "complaints", "join_requests",
 ];
+
+const SINGLETONS = new Set(["district_commissioner", "profile_info", "about_info"]);
 
 export default function AdminDashboard() {
   const insets = useSafeAreaInsets();
@@ -239,11 +268,17 @@ export default function AdminDashboard() {
       if (editing?.__new) {
         if (active === "district_commissioner") {
           await api.adminUpsertDC(payload);
+        } else if (SINGLETONS.has(active)) {
+          await api.adminUpsertSingleton(active, payload);
         } else {
           await api.adminCreate(active, payload);
         }
       } else {
-        await api.adminUpdate(active, editing.id, payload);
+        if (SINGLETONS.has(active) && active !== "district_commissioner") {
+          await api.adminUpsertSingleton(active, payload);
+        } else {
+          await api.adminUpdate(active, editing.id, payload);
+        }
       }
       setEditing(null); setForm({});
       await load();
@@ -328,7 +363,7 @@ export default function AdminDashboard() {
         {active !== "complaints" && active !== "join_requests" ? (
           <TouchableOpacity testID="admin-add-btn" onPress={openCreate} style={styles.addBtn}>
             <Ionicons name="add" size={18} color="#fff" />
-            <Text style={styles.addBtnText}>{active === "district_commissioner" ? "সেট করুন" : "নতুন"}</Text>
+            <Text style={styles.addBtnText}>{SINGLETONS.has(active) ? "সেট করুন" : "নতুন"}</Text>
           </TouchableOpacity>
         ) : null}
       </View>

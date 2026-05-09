@@ -45,6 +45,8 @@ export const api = {
     return request(`/public/${collection}${qs}`);
   },
   dc: () => request(`/public/district_commissioner/single`),
+  profileInfo: () => request(`/public/profile_info/single`),
+  aboutInfo: () => request(`/public/about_info/single`),
   submitComplaint: (body: { name: string; phone: string; message: string; type: string }) =>
     request(`/public/complaints`, { method: "POST", body: JSON.stringify(body) }),
   submitJoinRequest: (body: { name: string; phone: string; category: string; address?: string; note?: string }) =>
@@ -65,4 +67,6 @@ export const api = {
     request(`/admin/${collection}/${id}`, { method: "DELETE" }, true),
   adminUpsertDC: (body: any) =>
     request(`/admin/district_commissioner/upsert`, { method: "POST", body: JSON.stringify(body) }, true),
+  adminUpsertSingleton: (collection: string, body: any) =>
+    request(`/admin/${collection}/upsert`, { method: "POST", body: JSON.stringify(body) }, true),
 };

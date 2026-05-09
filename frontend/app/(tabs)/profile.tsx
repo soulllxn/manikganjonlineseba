@@ -1,13 +1,21 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image } from "expo-image";
+import { api } from "../../src/api";
 import { colors } from "../../src/theme";
 
 export default function ProfileTab() {
   const insets = useSafeAreaInsets();
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      try { setProfile(await api.profileInfo()); } catch {}
+    })();
+  }, []);
 
   const items: { icon: any; label: string; route: string; testID: string }[] = [
     { icon: "information-circle", label: "ডেভেলপার সম্পর্কে", route: "/about", testID: "profile-about" },
@@ -22,12 +30,12 @@ export default function ProfileTab() {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
         <View style={styles.heroCard}>
           <Image
-            source="https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
+            source={profile?.image || "https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"}
             style={styles.avatar}
           />
-          <Text style={styles.devName}>Shoriful Alam</Text>
-          <Text style={styles.devEmail}>shoriful@manikganj.com</Text>
-          <Text style={styles.tag}>Developer of মানিকগঞ্জ অনলাইন সেবা</Text>
+          <Text style={styles.devName}>{profile?.name || "Shoriful Alam"}</Text>
+          <Text style={styles.devEmail}>{profile?.email || "shoriful@manikganj.com"}</Text>
+          <Text style={styles.tag}>{profile?.role || "Developer of মানিকগঞ্জ অনলাইন সেবা"}</Text>
         </View>
 
         <View style={{ marginTop: 18, gap: 10 }}>

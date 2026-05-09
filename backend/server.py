@@ -305,6 +305,39 @@ async def seed_sample_data():
             _doc({"title": "নতুন রেস্টুরেন্ট মেনু এসেছে", "body": "এখন রেস্টুরেন্টের নামে ট্যাপ করে মেনু দেখতে পারবেন।", "is_active": True}),
         ])
 
+    if await db.profile_info.count_documents({}) == 0:
+        await db.profile_info.insert_one(_doc({
+            "name": "Shoriful Alam",
+            "email": "shoriful@manikganj.com",
+            "image": "https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300",
+            "role": "Developer of মানিকগঞ্জ অনলাইন সেবা",
+            "is_active": True,
+        }))
+
+    if await db.about_info.count_documents({}) == 0:
+        await db.about_info.insert_one(_doc({
+            "name": "Shoriful Alam",
+            "title": "Full-Stack Developer",
+            "subtitle": "মানিকগঞ্জ অনলাইন সেবা",
+            "image": "https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300",
+            "bio": "আসসালামু আলাইকুম! আমি Shoriful Alam, একজন Full-Stack Developer এবং মানিকগঞ্জ এর গর্বিত নাগরিক। প্রযুক্তিকে কাজে লাগিয়ে নিজ জেলার মানুষের দৈনন্দিন জীবন আরো সহজ করার ভিশন থেকেই এই অ্যাপ এর জন্ম।",
+            "app_about": "মানিকগঞ্জ অনলাইন সেবা — মানিকগঞ্জ জেলার সকল নাগরিক সেবা এক ছাতার নিচে আনার একটি উদ্যোগ। হাসপাতাল, থানা, ফায়ার সার্ভিস, রক্তদাতা, রেস্টুরেন্ট, ভ্রমণস্থল, রেন্ট-এ-কার এবং আরো অনেক কিছু — সম্পূর্ণ বাংলায়, এক অ্যাপে।",
+            "features": "৭ উপজেলার সম্পূর্ণ তথ্য\nজরুরি কল ফিচার\nরক্তদাতা সার্চ ও ফিল্টার\nঅ্যাডমিন কন্ট্রোল্ড সকল কন্টেন্ট\nফ্রি ও ওপেন সোর্স",
+            "email": "shoriful@manikganj.com",
+            "facebook": "https://facebook.com",
+            "whatsapp": "https://wa.me/8801700000000",
+            "website": "https://manikganj-services.com",
+            "phone": "+8801700000000",
+            "tech_stack": "React Native\nExpo SDK 54\nFastAPI\nMongoDB\nJWT\nTypeScript",
+            "stat_experience_value": "৩+",
+            "stat_experience_label": "বছরের অভিজ্ঞতা",
+            "stat_projects_value": "২০+",
+            "stat_projects_label": "প্রজেক্ট",
+            "stat_upazilas_value": "৭",
+            "stat_upazilas_label": "উপজেলা সেবা",
+            "is_active": True,
+        }))
+
     if await db.e_services.count_documents({}) == 0:
         await db.e_services.insert_many([
             _doc({"name": "NID সেবা", "icon": "card", "url": "https://services.nidw.gov.bd/", "order": 1, "is_active": True}),
@@ -371,7 +404,7 @@ PUBLIC_COLLECTIONS = {
     "blood_donors", "tourist_places", "e_services", "notifications",
 }
 
-ALL_COLLECTIONS = PUBLIC_COLLECTIONS | {"district_commissioner", "complaints", "join_requests"}
+ALL_COLLECTIONS = PUBLIC_COLLECTIONS | {"district_commissioner", "complaints", "join_requests", "profile_info", "about_info"}
 
 
 def _strip(doc: dict) -> dict:
@@ -396,6 +429,18 @@ async def public_list(collection: str, upazila: Optional[str] = None):
 @api.get("/public/district_commissioner/single")
 async def public_dc():
     doc = await db.district_commissioner.find_one({"is_active": True}, {"_id": 0})
+    return doc or {}
+
+
+@api.get("/public/profile_info/single")
+async def public_profile_info():
+    doc = await db.profile_info.find_one({}, {"_id": 0})
+    return doc or {}
+
+
+@api.get("/public/about_info/single")
+async def public_about_info():
+    doc = await db.about_info.find_one({}, {"_id": 0})
     return doc or {}
 
 
@@ -483,6 +528,26 @@ async def admin_upsert_dc(payload: Dict[str, Any], admin: dict = Depends(require
         return await db.district_commissioner.find_one({"id": existing["id"]}, {"_id": 0})
     doc = _doc(payload)
     await db.district_commissioner.insert_one(doc.copy())
+    return _strip(doc)
+
+
+SINGLETON_COLLECTIONS = {"profile_info", "about_info"}
+
+
+@api.post("/admin/{collection}/upsert")
+async def admin_singleton_upsert(collection: str, payload: Dict[str, Any], admin: dict = Depends(require_admin)):
+    if collection not in SINGLETON_COLLECTIONS:
+        raise HTTPException(status_code=404, detail="Singleton not found")
+    payload.setdefault("is_active", True)
+    payload.pop("id", None)
+    payload.pop("_id", None)
+    existing = await db[collection].find_one({}, {"_id": 0})
+    if existing:
+        payload["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db[collection].update_one({"id": existing["id"]}, {"$set": payload})
+        return await db[collection].find_one({"id": existing["id"]}, {"_id": 0})
+    doc = _doc(payload)
+    await db[collection].insert_one(doc.copy())
     return _strip(doc)
 
 
