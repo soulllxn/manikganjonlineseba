@@ -5,11 +5,13 @@ export const colors = {
   redDark: "#D91F33",
   bg: "#FAFAFA",
   surface: "#FFFFFF",
+  surfaceAlt: "#F8FAFC",
   surfaceGlass: "rgba(255,255,255,0.78)",
   textPrimary: "#0A0A0A",
   textSecondary: "#4B5563",
   textMuted: "#94A3B8",
   border: "rgba(0,0,0,0.06)",
+  borderAlt: "#E5E7EB",
   shadow: "rgba(0,0,0,0.08)",
 };
 

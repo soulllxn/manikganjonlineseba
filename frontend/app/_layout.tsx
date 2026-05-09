@@ -5,8 +5,19 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts, HindSiliguri_400Regular, HindSiliguri_500Medium, HindSiliguri_600SemiBold, HindSiliguri_700Bold } from "@expo-google-fonts/hind-siliguri";
 import * as SplashScreen from "expo-splash-screen";
 import { View, ActivityIndicator } from "react-native";
+import { ThemeProvider, useTheme } from "../src/themeContext";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+function StackWithTheme() {
+  const { mode, colors } = useTheme();
+  return (
+    <>
+      <StatusBar style={mode === "dark" ? "light" : "dark"} />
+      <Stack screenOptions={{ headerShown: false, animation: "slide_from_right", contentStyle: { backgroundColor: colors.bg } }} />
+    </>
+  );
+}
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -30,8 +41,9 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false, animation: "slide_from_right" }} />
+      <ThemeProvider>
+        <StackWithTheme />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

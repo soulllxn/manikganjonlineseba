@@ -176,6 +176,16 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState<any>({});
+  const [search, setSearch] = useState("");
+
+  const filteredTabs = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return COLLECTION_ORDER;
+    return COLLECTION_ORDER.filter((c) => {
+      const t = SCHEMAS[c].title.toLowerCase();
+      return t.includes(q) || c.toLowerCase().includes(q);
+    });
+  }, [search]);
 
   useEffect(() => {
     (async () => {
@@ -278,22 +288,38 @@ export default function AdminDashboard() {
 
       {/* Sidebar tabs */}
       <View style={styles.sidebar}>
-        <FlatList
-          data={COLLECTION_ORDER}
-          keyExtractor={(it) => it}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 12 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              testID={`tab-${item}`}
-              onPress={() => setActive(item)}
-              style={[styles.tab, active === item && styles.tabActive]}
-            >
-              <Text style={[styles.tabText, active === item && styles.tabTextActive]}>{SCHEMAS[item].title}</Text>
+        <View style={styles.searchWrap}>
+          <Ionicons name="search" size={16} color={colors.textMuted} />
+          <TextInput
+            testID="admin-tab-search"
+            value={search}
+            onChangeText={setSearch}
+            placeholder="ম্যানেজমেন্ট সেকশন খুঁজুন..."
+            placeholderTextColor={colors.textMuted}
+            style={styles.searchInput}
+          />
+          {search ? (
+            <TouchableOpacity onPress={() => setSearch("")}>
+              <Ionicons name="close-circle" size={18} color={colors.textMuted} />
             </TouchableOpacity>
+          ) : null}
+        </View>
+        <View style={styles.tabsWrap}>
+          {filteredTabs.length === 0 ? (
+            <Text style={styles.noTabResult}>কোনো সেকশন মিলেনি</Text>
+          ) : (
+            filteredTabs.map((item) => (
+              <TouchableOpacity
+                key={item}
+                testID={`tab-${item}`}
+                onPress={() => setActive(item)}
+                style={[styles.tab, active === item && styles.tabActive]}
+              >
+                <Text style={[styles.tabText, active === item && styles.tabTextActive]}>{SCHEMAS[item].title}</Text>
+              </TouchableOpacity>
+            ))
           )}
-        />
+        </View>
       </View>
 
       {/* List */}
@@ -414,7 +440,11 @@ const styles = StyleSheet.create({
   iconBtn: { width: 40, height: 40, alignItems: "center", justifyContent: "center", borderRadius: 20 },
   topTitle: { flex: 1, textAlign: "center", fontFamily: "HindSiliguri_700Bold", fontSize: 16, color: colors.textPrimary },
   sidebar: { paddingVertical: 10, backgroundColor: "#fff", borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: "#F1F5F9" },
-  tab: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: "#F1F5F9", marginRight: 8, borderWidth: 1, borderColor: "#E5E7EB" },
+  searchWrap: { flexDirection: "row", alignItems: "center", marginHorizontal: 12, marginBottom: 10, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: "#F8FAFC", borderRadius: 12, borderWidth: 1, borderColor: "#E5E7EB", gap: 6 },
+  searchInput: { flex: 1, fontFamily: "HindSiliguri_500Medium", fontSize: 13, color: colors.textPrimary, paddingVertical: 4 },
+  tabsWrap: { flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 12, gap: 6 },
+  noTabResult: { paddingVertical: 8, paddingHorizontal: 4, fontFamily: "HindSiliguri_500Medium", fontSize: 12, color: colors.textMuted },
+  tab: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: "#F1F5F9", marginBottom: 4, borderWidth: 1, borderColor: "#E5E7EB" },
   tabActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   tabText: { fontFamily: "HindSiliguri_600SemiBold", fontSize: 12, color: colors.textPrimary },
   tabTextActive: { color: "#fff" },

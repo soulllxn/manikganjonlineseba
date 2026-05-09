@@ -12,6 +12,7 @@ import { BlurView } from "expo-blur";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../src/api";
 import { colors } from "../../src/theme";
+import { useTheme } from "../../src/themeContext";
 import { HeroSlider } from "../../src/components/HeroSlider";
 import { NoticeMarquee } from "../../src/components/NoticeMarquee";
 import { CallButton, SectionHeader } from "../../src/components/Common";
@@ -49,7 +50,7 @@ function SplashOverlay({ onDone }: { onDone: () => void }) {
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { mode, colors: themeColors, toggle: toggleTheme } = useTheme();
   const [splashing, setSplashing] = useState(true);
 
   const [notices, setNotices] = useState<any[]>([]);
@@ -105,14 +106,14 @@ export default function Home() {
   };
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top }]}>
+    <View style={[styles.root, { paddingTop: insets.top, backgroundColor: themeColors.bg }]}>
       {splashing ? <SplashOverlay onDone={() => setSplashing(false)} /> : null}
       {/* Header */}
-      <View style={styles.header} testID="main-header">
-        <TouchableOpacity testID="header-menu-btn" onPress={() => setDrawerOpen(true)} style={styles.iconBtn}>
-          <Ionicons name="menu" size={24} color={colors.textPrimary} />
+      <View style={[styles.header, { backgroundColor: themeColors.surface, borderBottomColor: themeColors.borderAlt }]} testID="main-header">
+        <TouchableOpacity testID="header-theme-toggle" onPress={toggleTheme} style={styles.iconBtn}>
+          <Ionicons name={mode === "dark" ? "sunny" : "moon"} size={22} color={mode === "dark" ? "#FCD34D" : "#1F2937"} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>মানিকগঞ্জ অনলাইন সেবা</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.textPrimary }]} numberOfLines={1}>মানিকগঞ্জ অনলাইন সেবা</Text>
         <TouchableOpacity
           testID="header-notif-btn"
           onPress={() => router.push("/notifications")}
@@ -263,29 +264,7 @@ export default function Home() {
         </View>
       </ScrollView>
 
-      {/* Drawer */}
-      <Modal visible={drawerOpen} transparent animationType="fade" onRequestClose={() => setDrawerOpen(false)}>
-        <View style={styles.drawerBackdrop}>
-          <View style={styles.drawer} testID="drawer-popup">
-            <Image
-              source="https://images.pexels.com/photos/14230741/pexels-photo-14230741.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300&w=300"
-              style={styles.devAvatar}
-              contentFit="cover"
-            />
-            <Text style={styles.devName}>Shoriful Alam</Text>
-            <Text style={styles.devEmail}>shoriful@manikganj.com</Text>
-            <Text style={styles.devRole}>Developer of মানিকগঞ্জ অনলাইন সেবা</Text>
-
-            <TouchableOpacity
-              testID="drawer-close-btn"
-              onPress={() => setDrawerOpen(false)}
-              style={[styles.drawerBtn, { backgroundColor: colors.primary }]}
-            >
-              <Text style={styles.drawerBtnText}>বন্ধ করুন</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      {/* Drawer removed — replaced by theme toggle */}
     </View>
   );
 }
@@ -337,10 +316,10 @@ const styles = StyleSheet.create({
   iconBox: { width: 50, height: 50, borderRadius: 14, alignItems: "center", justifyContent: "center", marginBottom: 8 },
   serviceLabel: { fontSize: 12, fontFamily: "HindSiliguri_600SemiBold", color: colors.textPrimary, textAlign: "center", lineHeight: 18 },
 
-  adCard: { height: 130, marginRight: 12, borderRadius: 16, overflow: "hidden", backgroundColor: "#E5E7EB" },
-  adTitle: { position: "absolute", bottom: 12, left: 14, color: "#fff", fontFamily: "HindSiliguri_700Bold", fontSize: 16 },
+  adCard: { height: 180, marginRight: 12, borderRadius: 16, overflow: "hidden", backgroundColor: "#E5E7EB" },
+  adTitle: { position: "absolute", bottom: 14, left: 16, color: "#fff", fontFamily: "HindSiliguri_700Bold", fontSize: 17 },
   adPlaceholder: {
-    height: 110, borderRadius: 16, borderWidth: 2, borderStyle: "dashed",
+    height: 160, borderRadius: 16, borderWidth: 2, borderStyle: "dashed",
     borderColor: "#CBD5E1", alignItems: "center", justifyContent: "center", backgroundColor: "#F8FAFC",
   },
   adPlaceholderText: { color: colors.textMuted, fontFamily: "HindSiliguri_600SemiBold" },
