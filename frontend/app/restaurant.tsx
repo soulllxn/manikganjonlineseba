@@ -59,6 +59,16 @@ export default function RestaurantPage() {
         data={filtered}
         keyExtractor={(it) => it.id}
         contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 32 }}
+        ListHeaderComponent={
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: "/join-request", params: { category: "রেস্টুরেন্ট" } } as any)}
+            style={styles.joinBtn}
+            testID="restaurant-join-btn"
+          >
+            <Ionicons name="add-circle" size={18} color="#fff" />
+            <Text style={styles.joinBtnText}>আমিও যুক্ত হতে চাই</Text>
+          </TouchableOpacity>
+        }
         ListEmptyComponent={<EmptyState text="কোনো রেস্টুরেন্ট পাওয়া যায়নি" />}
         renderItem={({ item }) => (
           <View style={styles.card} testID={`restaurant-${item.id}`}>
@@ -140,4 +150,6 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: "row", alignItems: "center", padding: 14, backgroundColor: colors.primary },
   modalTitle: { flex: 1, color: "#fff", fontFamily: "HindSiliguri_700Bold", fontSize: 15 },
   closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(255,255,255,0.18)", alignItems: "center", justifyContent: "center" },
+  joinBtn: { marginTop: 12, marginBottom: 4, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999 },
+  joinBtnText: { color: "#fff", fontFamily: "HindSiliguri_600SemiBold", fontSize: 13 },
 });

@@ -51,6 +51,16 @@ export default function RentACarPage() {
         data={filtered}
         keyExtractor={(it) => it.id}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32, paddingTop: 8 }}
+        ListHeaderComponent={
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: "/join-request", params: { category: "রেন্ট-এ-কার" } } as any)}
+            style={styles.joinBtn}
+            testID="rent-join-btn"
+          >
+            <Ionicons name="add-circle" size={18} color="#fff" />
+            <Text style={styles.joinBtnText}>আমিও যুক্ত হতে চাই</Text>
+          </TouchableOpacity>
+        }
         ListEmptyComponent={<EmptyState text="কোনো গাড়ি পাওয়া যায়নি" />}
         renderItem={({ item }) => (
           <View style={styles.card} testID={`rent-${item.id}`}>
@@ -83,4 +93,6 @@ const styles = StyleSheet.create({
   name: { fontFamily: "HindSiliguri_700Bold", fontSize: 14, color: colors.textPrimary },
   sub: { fontFamily: "HindSiliguri_400Regular", fontSize: 12, color: colors.textSecondary, marginTop: 4 },
   phone: { fontFamily: "HindSiliguri_600SemiBold", fontSize: 12, color: colors.primary, marginTop: 4 },
+  joinBtn: { marginBottom: 4, alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999 },
+  joinBtnText: { color: "#fff", fontFamily: "HindSiliguri_600SemiBold", fontSize: 13 },
 });

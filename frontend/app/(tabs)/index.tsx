@@ -137,8 +137,10 @@ export default function Home() {
         </View>
 
         {/* Ads */}
-        <View style={styles.section}>
-          <SectionHeader title="বিজ্ঞাপন" />
+        <View style={[styles.section, { paddingHorizontal: 8 }]}>
+          <View style={{ paddingHorizontal: 8 }}>
+            <SectionHeader title="বিজ্ঞাপন" />
+          </View>
           {ads.length > 0 ? (
             <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
               {ads.map((a) => (
@@ -146,7 +148,7 @@ export default function Home() {
                   testID={`ad-${a.id}`}
                   key={a.id}
                   onPress={() => a.url && Linking.openURL(a.url)}
-                  style={[styles.adCard, { width: width - 32 }]}
+                  style={[styles.adCard, { width: width - 16 }]}
                 >
                   <Image source={a.image} style={StyleSheet.absoluteFillObject as any} contentFit="cover" />
                   <LinearGradient colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.55)"]} style={StyleSheet.absoluteFillObject as any} />
@@ -155,7 +157,7 @@ export default function Home() {
               ))}
             </ScrollView>
           ) : (
-            <View style={styles.adPlaceholder}>
+            <View style={[styles.adPlaceholder, { marginHorizontal: 8 }]}>
               <Text style={styles.adPlaceholderText}>Ad Space Available</Text>
             </View>
           )}
@@ -174,11 +176,13 @@ export default function Home() {
                 <View style={styles.dcAvatarRing}>
                   <Image source={dc.image} style={styles.dcAvatar} contentFit="cover" />
                 </View>
-                <Text style={styles.dcName}>{dc.name}</Text>
-                <Text style={styles.dcDesignation}>{dc.designation}</Text>
-                <Text style={styles.dcPhone}>📞 {dc.phone}</Text>
-                <View style={{ marginTop: 12 }}>
-                  <CallButton phone={dc.phone} testID="dc-call-btn" />
+                <View style={styles.dcInfo}>
+                  <Text style={styles.dcName} numberOfLines={2}>{dc.name}</Text>
+                  <Text style={styles.dcDesignation} numberOfLines={2}>{dc.designation}</Text>
+                  <Text style={styles.dcPhone}>📞 {dc.phone}</Text>
+                  <View style={{ marginTop: 10, alignSelf: "flex-start" }}>
+                    <CallButton phone={dc.phone} testID="dc-call-btn" />
+                  </View>
                 </View>
               </BlurView>
             </View>
@@ -322,12 +326,13 @@ const styles = StyleSheet.create({
 
   dcWrap: { borderRadius: 24, overflow: "hidden", padding: 0 },
   dcBgGradient: { ...StyleSheet.absoluteFillObject as any, borderRadius: 24 },
-  dcGlass: { padding: 22, alignItems: "center", borderRadius: 24, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.55)" },
+  dcGlass: { padding: 18, flexDirection: "row", alignItems: "center", borderRadius: 24, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.55)", gap: 14 },
   dcAvatarRing: { padding: 4, borderRadius: 60, backgroundColor: "rgba(255,255,255,0.85)", borderWidth: 1, borderColor: "rgba(255,255,255,0.6)" },
   dcAvatar: { width: 92, height: 92, borderRadius: 46 },
-  dcName: { fontSize: 18, fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary, marginTop: 12 },
-  dcDesignation: { fontSize: 13, fontFamily: "HindSiliguri_500Medium", color: colors.textSecondary, marginTop: 2 },
-  dcPhone: { fontSize: 14, fontFamily: "HindSiliguri_600SemiBold", color: colors.primary, marginTop: 8 },
+  dcInfo: { flex: 1 },
+  dcName: { fontSize: 16, fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary },
+  dcDesignation: { fontSize: 12, fontFamily: "HindSiliguri_500Medium", color: colors.textSecondary, marginTop: 2 },
+  dcPhone: { fontSize: 13, fontFamily: "HindSiliguri_600SemiBold", color: colors.primary, marginTop: 6 },
 
   upazilaCard: {
     backgroundColor: "#fff", borderRadius: 14, padding: 12, alignItems: "center",

@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../theme";
 
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = Math.min(width - 32, 600);
+const CARD_WIDTH = Math.min(width - 64, 500);
 
 export function HeroSlider({ items }: { items: { id: string; title?: string; image: string }[] }) {
   const ref = useRef<FlatList<any>>(null);
@@ -36,7 +36,7 @@ export function HeroSlider({ items }: { items: { id: string; title?: string; ima
         showsHorizontalScrollIndicator={false}
         snapToInterval={CARD_WIDTH + 12}
         decelerationRate="fast"
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 32 }}
         onMomentumScrollEnd={(e) => {
           const i = Math.round(e.nativeEvent.contentOffset.x / (CARD_WIDTH + 12));
           setIdx(i);
@@ -62,7 +62,7 @@ export function HeroSlider({ items }: { items: { id: string; title?: string; ima
 }
 
 const styles = StyleSheet.create({
-  card: { height: 180, borderRadius: 18, overflow: "hidden", backgroundColor: "#E5E7EB" },
+  card: { height: 160, borderRadius: 18, overflow: "hidden", backgroundColor: "#E5E7EB" },
   title: {
     position: "absolute", bottom: 14, left: 16, right: 16,
     color: "#fff", fontSize: 18, fontFamily: "HindSiliguri_700Bold",

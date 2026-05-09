@@ -146,17 +146,37 @@ async def seed_sample_data():
             _doc({"name": "ঘিওর উপজেলা স্বাস্থ্য কমপ্লেক্স", "address": "ঘিওর, মানিকগঞ্জ", "phone": "+8801912345678", "is_active": True}),
         ])
 
+    UPZ_ORDER = ["মানিকগঞ্জ সদর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া", "সিংগাইর"]
     if await db.police.count_documents({}) == 0:
         await db.police.insert_many([
-            _doc({"name": f"{n} থানা", "oc_name": "ভারপ্রাপ্ত কর্মকর্তা", "phone": "+8801711000000", "upazila": n, "is_active": True})
-            for n in ["মানিকগঞ্জ সদর", "শিবালয়", "দৌলতপুর", "ঘিওর", "হরিরামপুর", "সাটুরিয়া", "সিংগাইর"]
+            _doc({"name": f"{n} থানা", "oc_name": "ভারপ্রাপ্ত কর্মকর্তা", "phone": "+8801711000000", "upazila": n, "order": i + 1, "is_active": True})
+            for i, n in enumerate(UPZ_ORDER)
         ])
 
     if await db.fire_service.count_documents({}) == 0:
         await db.fire_service.insert_many([
-            _doc({"name": "মানিকগঞ্জ ফায়ার সার্ভিস", "phone": "+880199", "address": "মানিকগঞ্জ সদর", "is_active": True}),
-            _doc({"name": "শিবালয় ফায়ার সার্ভিস", "phone": "+880199", "address": "শিবালয়", "is_active": True}),
+            _doc({"name": f"{n} ফায়ার সার্ভিস", "phone": "+880199", "address": n, "upazila": n, "order": i + 1, "is_active": True})
+            for i, n in enumerate(UPZ_ORDER)
         ])
+
+    # Migration: ensure police/fire_service have entries for ALL 7 upazilas with proper order
+    for col, label in (("police", "থানা"), ("fire_service", "ফায়ার সার্ভিস")):
+        for i, n in enumerate(UPZ_ORDER):
+            existing = await db[col].find_one({"upazila": n})
+            if existing:
+                await db[col].update_one({"id": existing["id"]}, {"$set": {"order": i + 1}})
+            else:
+                await db[col].insert_one(_doc({
+                    "name": f"{n} {label}",
+                    "phone": "+88019900000" + str(i),
+                    "address": n,
+                    "upazila": n,
+                    "order": i + 1,
+                    "is_active": True,
+                    **({"oc_name": "ভারপ্রাপ্ত কর্মকর্তা"} if col == "police" else {}),
+                }))
+        # Remove any legacy entries that have no upazila field
+        await db[col].delete_many({"upazila": {"$exists": False}})
 
     if await db.doctors.count_documents({}) == 0:
         await db.doctors.insert_many([

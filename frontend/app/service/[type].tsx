@@ -44,14 +44,16 @@ export default function ServiceList() {
         ListHeaderComponent={
           <View>
             <Image source={meta.banner} style={styles.banner} contentFit="cover" />
-            <TouchableOpacity
-              onPress={() => router.push("/join-request")}
-              style={styles.joinBtn}
-              testID="join-request-btn"
-            >
-              <Ionicons name="add-circle" size={18} color="#fff" />
-              <Text style={styles.joinBtnText}>আমিও যুক্ত হতে চাই</Text>
-            </TouchableOpacity>
+            {!["police", "fire_service"].includes(type as string) ? (
+              <TouchableOpacity
+                onPress={() => router.push({ pathname: "/join-request", params: { category: meta.title } } as any)}
+                style={styles.joinBtn}
+                testID="join-request-btn"
+              >
+                <Ionicons name="add-circle" size={18} color="#fff" />
+                <Text style={styles.joinBtnText}>আমিও যুক্ত হতে চাই</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         }
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}

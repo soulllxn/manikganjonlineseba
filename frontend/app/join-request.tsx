@@ -1,27 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "../src/api";
 import { colors } from "../src/theme";
 
 const CATS = ["হাসপাতাল", "ডাক্তার", "ব্লাড ব্যাংক", "অ্যাম্বুলেন্স", "রেন্ট-এ-কার", "রেস্টুরেন্ট", "অন্যান্য"];
+const VEHICLE_REQUIRED = ["অ্যাম্বুলেন্স", "রেন্ট-এ-কার"];
 
 export default function JoinRequest() {
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ category?: string }>();
+  const initial = params?.category && CATS.includes(params.category) ? params.category : CATS[0];
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [category, setCategory] = useState(CATS[0]);
+  const [category, setCategory] = useState<string>(initial);
   const [address, setAddress] = useState("");
+  const [vehicleNo, setVehicleNo] = useState("");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (params?.category && CATS.includes(params.category) && params.category !== category) {
+      setCategory(params.category);
+    }
+  }, [params?.category]);
+
+  const needsVehicle = VEHICLE_REQUIRED.includes(category);
+
   const submit = async () => {
     if (!name || !phone) return Alert.alert("নাম ও ফোন দিন");
+    if (needsVehicle && !vehicleNo) return Alert.alert("গাড়ির নম্বর আবশ্যক", `${category} সেবায় যুক্ত হতে গাড়ির নম্বর দিন।`);
     setLoading(true);
     try {
-      await api.submitJoinRequest({ name, phone, category, address, note });
+      const composedNote = needsVehicle && vehicleNo
+        ? `গাড়ির নম্বর: ${vehicleNo}${note ? "\n" + note : ""}`
+        : note;
+      await api.submitJoinRequest({ name, phone, category, address, note: composedNote });
       Alert.alert("ধন্যবাদ!", "আপনার অনুরোধ গ্রহণ করা হয়েছে।", [{ text: "OK", onPress: () => router.back() }]);
     } catch (e: any) { Alert.alert("ত্রুটি", e?.message); }
     finally { setLoading(false); }
@@ -52,6 +68,20 @@ export default function JoinRequest() {
         <Text style={styles.label}>মোবাইল নম্বর</Text>
         <TextInput testID="join-phone" value={phone} onChangeText={setPhone} style={styles.input} placeholder="+8801XXXXXXXXX" keyboardType="phone-pad" />
 
+        {needsVehicle ? (
+          <>
+            <Text style={[styles.label, { color: colors.red }]}>গাড়ির নম্বর (আবশ্যক)</Text>
+            <TextInput
+              testID="join-vehicle"
+              value={vehicleNo}
+              onChangeText={setVehicleNo}
+              style={[styles.input, { borderColor: colors.red }]}
+              placeholder="যেমন: ঢাকা-মেট্রো-গ-১১-৫৫৫৫"
+            />
+            <Text style={styles.helperSmall}>{category} সেবায় যুক্ত হতে গাড়ির নম্বর অবশ্যই দিতে হবে।</Text>
+          </>
+        ) : null}
+
         <Text style={styles.label}>ঠিকানা</Text>
         <TextInput testID="join-address" value={address} onChangeText={setAddress} style={styles.input} placeholder="ঠিকানা" />
 
@@ -72,6 +102,7 @@ const styles = StyleSheet.create({
   iconBtn: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
   headerTitle: { flex: 1, textAlign: "center", fontSize: 16, fontFamily: "HindSiliguri_700Bold", color: colors.textPrimary },
   helper: { fontFamily: "HindSiliguri_400Regular", fontSize: 13, color: colors.textSecondary, marginBottom: 12 },
+  helperSmall: { fontFamily: "HindSiliguri_400Regular", fontSize: 11, color: colors.red, marginTop: 4 },
   label: { fontFamily: "HindSiliguri_600SemiBold", fontSize: 13, color: colors.textPrimary, marginBottom: 6, marginTop: 10 },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: "#F1F5F9", borderWidth: 1, borderColor: "#E5E7EB" },
